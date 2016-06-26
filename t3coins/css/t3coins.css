@@ -1,0 +1,77 @@
+body {
+    font-family: "Lato";
+    font-size: 14px;
+    padding: 0 20px 20px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-success {
+    font-weight: bold;
+    color: #43A047;
+}
+
+.text-danger {
+    font-weight: bold;
+    color: #E53935;
+}
+
+#coins-basket {
+    height: 70px;
+    background-color: aliceblue;
+    padding: 10px;
+    margin-bottom: 30px;
+}
+
+#left-scale {
+    border-bottom: 10px solid #E64A19;
+    height: 150px;
+    padding: 10px 10px 0 10px;
+}
+
+#right-scale {
+    border-bottom: 10px solid #0277BD;
+    height: 150px;
+    padding: 10px 10px 0 10px;
+}
+
+#center-scale {
+    background-color: #bbbbbb;
+    height: 300px;
+}
+
+#center-scale.correct {
+    background-color: #9CCC65;
+}
+
+#center-scale.incorrect {
+    background-color: #EF9A9A;
+}
+
+.coin {
+    height: 50px;
+    width: 50px;
+    line-height: 50px;
+    font-size: 1.2em;
+    text-align: center;
+    display: inline-block;
+    border: 1px solid #bbb;
+    border-radius: 25px;
+    margin-bottom: 0;
+}
+
+.coin .material-icons {
+    line-height: 50px;
+    color: #455A64;
+}
+
+.coin.weighted {
+    background-color: #ddd;
+}
+
+.as-sortable-item, .as-sortable-placeholder {
+    display: inline-block;
+    float: left;
+}

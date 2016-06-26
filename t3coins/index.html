@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Angular Material style sheet -->
+  <link rel="stylesheet"
+        href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.css">
+
+  <!-- Angular Material requires Angular.js Libraries -->
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-aria.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-messages.min.js"></script>
+
+  <!-- Angular Material Library -->
+  <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0-rc2/angular-material.min.js"></script>
+
+  <!-- Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+  <!-- jQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+  <script src="js/chance.min.js"></script>
+  <script src="js/ng-sortable.js"></script>
+  <script src="js/t3coins2.js"></script>
+  <script src="js/t3coins-model.js"></script>
+  <link rel="stylesheet" href="css/ng-sortable.min.css">
+  <link rel="stylesheet" href="css/ng-sortable.style.min.css">
+  <link rel="stylesheet" href="css/t3coins.css">
+</head>
+
+<body ng-app="t3coinsApp" ng-controller="t3coinsCtrl" ng-cloak>
+
+<div id="draggable-area">
+
+  <h2 class="text-danger text-center">13 Coins Problem</h2>
+
+  <p class=" text-center">
+    Find a single counterfeit coin among <strong>13</strong> coins, knowing only that the counterfeit coin
+    <u>has a weight</u> which differs from that of a good coin. You are only allowed 3 weighings on a balance scale.
+  </p>
+
+  <div id="coins-basket" as-sortable="basketControlListeners" ng-model="basket.coins"
+       layout="row" layout-align="center center">
+    <div ng-repeat="coin in basket.coins" as-sortable-item class="coin" ng-class="{weighted: coin.weighted == true}">
+      <div as-sortable-item-handle>
+        {{ coin.id }}
+      </div>
+    </div>
+  </div>
+
+  <div id="balance-scale">
+    <div layout="row">
+
+      <div flex></div>
+
+      <div flex="25" flex-xs="40" id="left-scale" as-sortable="scaleControlListeners" ng-model="balanceScale.left.coins"
+           layout="row" layout-align="center end">
+        <div ng-repeat="coin in balanceScale.left.coins" as-sortable-item class="coin"
+             ng-class="{weighted: coin.weighted == true}">
+          <div as-sortable-item-handle>
+            {{ coin.id }}
+          </div>
+        </div>
+      </div>
+
+      <div id="center-scale" layout="row" layout-align="center center" ng-class="{correct: result == true, incorrect: result == false}">
+        <div style="position: relative; margin-top: -24px;">
+          <hr style="position: absolute; width: 54px;">
+        </div>
+        <md-button class="md-fab md-mini" style="margin-top: -5px;"
+                   ng-click="doWeighing()" ng-disabled="weightingCount == maxWeightingAllowed || result != null">
+          <span class="material-icons">network_wifi</span>
+        </md-button>
+      </div>
+
+      <div flex="25" flex-xs="40" id="right-scale" as-sortable="scaleControlListeners" ng-model="balanceScale.right.coins"
+           layout="row" layout-align="center end">
+        <div ng-repeat="coin in balanceScale.right.coins" as-sortable-item class="coin"
+             ng-class="{weighted: coin.weighted == true}">
+          <div as-sortable-item-handle>
+            {{ coin.id }}
+          </div>
+        </div>
+      </div>
+
+      <div flex></div>
+
+    </div>
+
+  </div>
+
+  <p layout="row">
+    <span flex>&nbsp;</span>
+    <span ng-if="result == true" class="text-success text-center">CORRECT</span>
+    <span ng-if="result == false" class="text-danger text-center">WRONG!</span>
+    <span flex>&nbsp;</span>
+  </p>
+
+  <p class="text-center">
+    Weighing count: <strong class="text-danger">{{ weightingCount }}</strong>. You have <strong>{{ maxWeightingAllowed - weightingCount }}</strong>
+    weighing left.
+  </p>
+
+  <p class="text-center">
+    <label>The counterfeit coin is: </label>
+    <md-input-container>
+      <input type="text" ng-model="answer" ng-disabled="result != null">
+    </md-input-container>
+    <md-button class="md-primary md-raised" ng-click="submitAnswer()" ng-disabled="result != null">Submit answer</md-button>
+    <md-button class="md-accent md-raised" ng-click="reset()">Reset</md-button>
+    <md-button class="md-accent md-fab md-mini" ng-click="simulate()">
+      <span class="material-icons" style="line-height: 38px;" ng-if="!simulating">play_circle_outline</span>
+      <span class="material-icons" style="line-height: 38px;" ng-if="simulating">stop</span>
+    </md-button>
+    <label>{{ simulationCase }}</label>
+  </p>
+
+</div>
+</body>
+</html>
