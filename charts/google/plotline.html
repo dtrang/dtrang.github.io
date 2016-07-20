@@ -1,0 +1,79 @@
+<html>
+<head>
+  <style>
+    .chartWithMarkerOverlay {
+      position: relative;
+      width: 700px;
+    }
+    .overlay-marker {
+      width: 50px;
+      height: 50px;
+      position: absolute;
+      top: 53px;
+      left: 528px;
+    }
+    .plotline {
+      height: 100%;
+      width: 2px;
+      background-color: red;
+      position: absolute;
+      display: none;
+    }
+  </style>
+
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+    google.charts.load("current", {packages:['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+    function drawChart() {
+      var data = new google.visualization.arrayToDataTable([
+        ['Threat', 'Attacks'],
+        ['Chandrian', 38],
+        ['Ghosts', 12],
+        ['Ghouls', 6],
+        ['UFOs', 44],
+        ['Vampires', 28],
+        ['Zombies', 88]
+      ]);
+
+      var options = {
+        legend: 'none',
+        colors: ['#760946'],
+        lineWidth: 4,
+        vAxis: { gridlines: { count: 4 } }
+      };
+
+      function placeMarker(dataTable) {
+        var cli = this.getChartLayoutInterface();
+        var chartArea = cli.getChartAreaBoundingBox();
+        console.log(chartArea);
+        // Plot line
+        var elemNum = 3;
+        var plotLine = document.querySelector('.plotline');
+        plotLine.style.top = 0 + chartArea.top + "px";
+        plotLine.style.left = Math.floor(cli.getXLocation(elemNum)) + "px";
+        plotLine.style.height = chartArea.height + "px";
+        plotLine.style.display = "block";
+      };
+
+      var chart = new google.visualization.LineChart(document.getElementById('line-chart-marker'));
+      google.visualization.events.addListener(chart, 'ready',
+          placeMarker.bind(chart, data));
+      chart.draw(data, options);
+    }
+  </script>
+</head>
+<body>
+<div class="chartWithMarkerOverlay">
+
+  <div id="line-chart-marker" style="width: 700px; height: 500px;"></div>
+
+  <div class="overlay-marker">
+    <img src="https://developers.google.com/chart/interactive/images/zombie_150.png" height="50">
+  </div>
+
+  <div class="plotline">&nbsp;&nbsp;&nbsp;Woohoo...</div>
+
+</div>
+</body>
+</html>
