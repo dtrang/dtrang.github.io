@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <script src="chance.min.js"></script>
+    <script src="smp.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+    <style>
+      body {
+        font-family: "Lato";
+        font-size: 14px;
+        padding: 0 20px 20px;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      th, td {
+        text-align: left;
+        padding: 8px;
+        vertical-align: top;
+      }
+
+      tr:nth-child(even){background-color: #f2f2f2}
+
+      th {
+        background-color: #26A69A;
+        color: white;
+      }
+
+      .important, .text-bold {
+        font-weight: bold;
+      }
+
+      .important {
+        color: #F44336;
+      }
+
+      .text-underline {
+        text-decoration: underline;
+      }
+
+      form label, form input[type=button] {
+        margin-right: 10px;
+      }
+    </style>
+  </head>
+
+  <body ng-app="smpApp" ng-controller="smpCtrl">
+
+  <div>
+
+    <h2 class="text-danger">Stable Marriage Problem</h2>
+
+    <p>
+      Reference: <a href="https://en.wikipedia.org/wiki/Stable_marriage_problem" target="_blank">https://en.wikipedia.org/wiki/Stable_marriage_problem</a>
+    </p>
+
+    <hr/>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <form class="form">
+          <label>Number of women <input type="number" class="form-control" ng-disabled="simulating == true" ng-model="numPeoplePerGender"/></label>
+          <label>Number of men <input type="number" class="form-control" ng-disabled="simulating == true" ng-model="numPeoplePerGender"/></label>
+          <label>Number of simulations<input type="number" class="form-control" ng-disabled="simulating == true" ng-model="maxRound"/></label>
+          <label for="cb">
+            <input id="cb" type="checkbox" ng-model="showEngagement" value="true"/>
+            Show engagement list
+          </label>
+          <input type="button" ng-if="simulating != true" ng-click="startSimulation()" value="Start simulation" class="btn btn-default text-bold">
+          <input type="button" ng-if="simulating == true" ng-click="stopSimulation()" value="Stop simulation" class="btn btn-danger">
+        </form>
+      </div>
+    </div>
+
+    <h4 ng-show="totalRounds">Simulation {{ totalRounds }}. Total people matched: {{ totalMatched }}</h4>
+
+    <div class="row" style="margin-top: 30px;">
+      <div class="col-sm-12">
+        <div id="chart-container" style="width: 100%;"></div>
+      </div>
+    </div>
+
+    <table ng-if="showEngagement && totalRounds > 0">
+      <tr>
+        <th colspan="3"><p>Engagement table for round {{ totalRounds }}</p></th>
+      </tr>
+      <tr ng-repeat="man in men">
+        <td>
+          <p>
+            <strong>{{ man.toString() }}</strong> engaged to <strong>{{ man.fiance.toString() }}</strong>
+          </p>
+        </td>
+        <td>
+          <p class="text-bold text-underline">{{ man.toString() }}'s preferences</p>
+          <p ng-repeat="p in man.preferences" ng-class="{important: p === man.fiance}">
+            {{ p.toString() }}
+          </p>
+        </td>
+        <td>
+          <p class="text-bold text-underline">{{ man.fiance.toString() }}'s preferences</p>
+          <p ng-repeat="p in man.fiance.preferences" ng-class="{important: p === man.fiance.fiance}">
+            {{ p.toString() }}
+          </p>
+        </td>
+      </tr>
+    </table>
+
+  </div>
+  </body>
+</html>
