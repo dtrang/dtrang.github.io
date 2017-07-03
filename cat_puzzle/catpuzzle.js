@@ -11,6 +11,7 @@ app.controller('catCtrl', function ($scope) {
       $scope.doors.push(i);
     }
     position = chance.integer({min: min, max: max});
+    $scope.attempts = 0;
   }
 
   init();
@@ -25,6 +26,7 @@ app.controller('catCtrl', function ($scope) {
       $scope.message = "Congrats, you caught the cat!";
     } else {
       $scope.message = "Oops, wrong door";
+      $scope.attempts++;
       changePosition();
     }
   };
@@ -32,6 +34,7 @@ app.controller('catCtrl', function ($scope) {
   $scope.reset = function () {
     position = chance.integer({min: min, max: max});
     $scope.message = "";
+    $scope.attempts = 0;
   };
 
   function changePosition() {

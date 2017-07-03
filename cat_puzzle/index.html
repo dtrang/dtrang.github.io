@@ -55,7 +55,9 @@
     </div>
   </div>
 
-  <p>{{ message }}</p>
+  <p ng-class="{'text-success': correctDoor > 0, 'text-danger': correctDoor == null}">{{ message }}</p>
+
+  <p ng-if="attempts > 0">Attempts: {{ attempts }}</p>
 
   <button ng-click="reset()" class="btn btn-default">Reset</button>
 
