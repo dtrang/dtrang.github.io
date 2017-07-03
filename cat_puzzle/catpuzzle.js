@@ -27,7 +27,7 @@ app.controller('catCtrl', function ($scope) {
     } else {
       $scope.message = "Oops, wrong door";
       $scope.attempts++;
-      changePosition();
+      changePosition(doorNum);
     }
   };
 
@@ -38,13 +38,26 @@ app.controller('catCtrl', function ($scope) {
     $scope.correctDoor = null;
   };
 
-  function changePosition() {
+  function changePosition(guessedDoorNum) {
     if (position === min) {
-      position += 1;
-    } else if (position === max) {
-      position -= 1;
-    } else {
-      position += chance.bool() ? 1 : -1;
+      position++;
+      return;
     }
+
+    if (position === max) {
+      position--;
+      return;
+    }
+
+    if (Math.abs(guessedDoorNum - position) === 1) {
+      if (position > guessedDoorNum) {
+        position++;
+      } else {
+        position--;
+      }
+      return;
+    }
+
+    position += chance.bool() ? 1 : -1;
   }
 });
