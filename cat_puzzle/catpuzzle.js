@@ -35,6 +35,7 @@ app.controller('catCtrl', function ($scope) {
     position = chance.integer({min: min, max: max});
     $scope.message = "";
     $scope.attempts = 0;
+    $scope.correctDoor = null;
   };
 
   function changePosition() {
