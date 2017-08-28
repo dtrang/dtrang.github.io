@@ -48,10 +48,9 @@ app.controller('mortgageCtrl', function ($scope) {
     while ($scope.loanBalance >= $scope.accruedOffsetBalance && $scope.accruedOffsetBalance >= 0) {
       date = moment(date).add(1, 'days').toDate();
       var endOfMonthDate = getLastDayOfMonth(date);
+      monthlyAccruedInterest += ($scope.loanBalance - $scope.accruedOffsetBalance) * annualInterestRate / 365;
 
-      if (format(endOfMonthDate) !== format(date)) {
-        monthlyAccruedInterest += ($scope.loanBalance - $scope.accruedOffsetBalance) * annualInterestRate / 365;
-      } else {
+      if (format(endOfMonthDate) === format(date)) {
         var data = {date: format(date), interestPaid: monthlyAccruedInterest};
         var remainingMoney = $scope.monthlyIncome - monthlyAccruedInterest - $scope.monthlyExpense;
         $scope.accruedOffsetBalance = $scope.accruedOffsetBalance + remainingMoney;
