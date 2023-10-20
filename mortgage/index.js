@@ -8,33 +8,33 @@ app.controller('mortgageCtrl', function ($scope) {
       loanBalance: 500000,
       loanTerm: 30,
       interestRate: 5,
-      monthlyExpense: 3000,
-      monthlyIncome: 6000,
-      offsetBalance: 1000,
+      monthlyExpense: 2000,
+      monthlyIncome: 5000,
+      offsetBalance: 10000,
     },
     {
-      loanBalance: 900000.0,
+      loanBalance: 1000000,
       loanTerm: 30,
       interestRate: 5,
       monthlyExpense: 6000,
-      monthlyIncome: 14000.0,
-      offsetBalance: 50000.0,
+      monthlyIncome: 10000,
+      offsetBalance: 20000,
     },
     {
-      loanBalance: 1500000.0,
+      loanBalance: 1500000,
+      loanTerm: 30,
+      interestRate: 5,
+      monthlyExpense: 8000,
+      monthlyIncome: 15000,
+      offsetBalance: 0,
+    },
+    {
+      loanBalance: 2000000,
       loanTerm: 30,
       interestRate: 5,
       monthlyExpense: 10000,
-      monthlyIncome: 20000.0,
-      offsetBalance: 0.0,
-    },
-    {
-      loanBalance: 3000000.0,
-      loanTerm: 30,
-      interestRate: 5,
-      monthlyExpense: 10000,
-      monthlyIncome: 20000.0,
-      offsetBalance: 500000.0,
+      monthlyIncome: 20000,
+      offsetBalance: 100000,
     },
   ];
 
@@ -71,7 +71,8 @@ app.controller('mortgageCtrl', function ($scope) {
       $scope.offsetBalance,
       $scope.monthlyIncome,
       $scope.monthlyExpense,
-      $scope.monthlyPrincipalRepayment
+      $scope.monthlyPrincipalRepayment,
+      $scope.loanOption === 1
     );
 
     $scope.accruedOffsetBalance = results.accruedOffsetBalance;
@@ -105,6 +106,9 @@ app.controller('mortgageCtrl', function ($scope) {
     isPrincipalAndInterest = true
   ) {
     const annualInterestRate = interestRate / 100;
+    monthlyPrincipalRepayment = isPrincipalAndInterest
+      ? monthlyPrincipalRepayment
+      : 0;
 
     var runningLoanBalance = loanBalance;
     var accruedOffsetBalance = offsetAccountStartBalance;
@@ -132,7 +136,7 @@ app.controller('mortgageCtrl', function ($scope) {
           monthlyIncome -
           monthlyExpenses -
           monthlyAccruedInterest -
-          (isPrincipalAndInterest ? monthlyPrincipalRepayment : 0);
+          monthlyPrincipalRepayment;
 
         // Update accrued amounts, running loan balance
         accruedOffsetBalance += remainingMoney;
