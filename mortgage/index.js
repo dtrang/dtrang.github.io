@@ -1,6 +1,8 @@
 var app = angular.module('mortgageApp', []);
 
 app.controller('mortgageCtrl', function ($scope) {
+  $scope.loanOption = 1;
+
   $scope.scenarios = [
     {
       loanBalance: 500000,
@@ -64,6 +66,8 @@ app.controller('mortgageCtrl', function ($scope) {
 
   $scope.calculate = function () {
     var annualInterestRate = $scope.interestRate / 100;
+    var runningLoanBalance = $scope.loanBalance;
+
     $scope.accruedOffsetBalance = $scope.offsetBalance;
     $scope.accruedInterestBalance = 0.0;
     $scope.monthlyDataArray = [];
@@ -71,27 +75,41 @@ app.controller('mortgageCtrl', function ($scope) {
     var date = new Date();
     var monthlyAccruedInterest = 0.0;
     while (
-      $scope.loanBalance >= $scope.accruedOffsetBalance &&
+      runningLoanBalance >= $scope.accruedOffsetBalance &&
       $scope.accruedOffsetBalance >= 0
     ) {
       date = moment(date).add(1, 'days').toDate();
-      var endOfMonthDate = getLastDayOfMonth(date);
+
       monthlyAccruedInterest +=
-        (($scope.loanBalance - $scope.accruedOffsetBalance) *
+        ((runningLoanBalance - $scope.accruedOffsetBalance) *
           annualInterestRate) /
         365;
 
-      if (format(endOfMonthDate) === format(date)) {
-        var data = { date: format(date), interestPaid: monthlyAccruedInterest };
+      // Finish calculation if current date is the end of the month
+      if (format(getLastDayOfMonth(date)) === format(date)) {
+        // Remaining money left after everything
         var remainingMoney =
-          $scope.monthlyIncome - monthlyAccruedInterest - $scope.monthlyExpense;
+          $scope.monthlyIncome -
+          $scope.monthlyExpense -
+          $scope.monthlyPrincipalRepayment -
+          monthlyAccruedInterest;
+
+        // Update accrued amounts, running loan balance
         $scope.accruedOffsetBalance += remainingMoney;
         $scope.accruedInterestBalance += monthlyAccruedInterest;
-        monthlyAccruedInterest = 0;
+        runningLoanBalance -= $scope.monthlyPrincipalRepayment;
 
-        data.totalOffset = $scope.accruedOffsetBalance;
-        data.totalInterest = $scope.accruedInterestBalance;
-        $scope.monthlyDataArray.push(data);
+        // Push data of the month to the array
+        $scope.monthlyDataArray.push({
+          date: format(date),
+          interestPaid: monthlyAccruedInterest,
+          totalOffset: $scope.accruedOffsetBalance,
+          totalInterest: $scope.accruedInterestBalance,
+          loanBalance: runningLoanBalance,
+        });
+
+        // Reset monthly accrued interest
+        monthlyAccruedInterest = 0;
       }
     }
   };

@@ -65,13 +65,36 @@
       <h3>Simple mortgage calculation with 100% offset account</h3>
       <hr />
 
-      <p>
-        Interest is calculated daily and paid at the end of each month. You are considered to pay off your mortgage when
-        your offset account balance outperforms your remaining loan balance.
-      </p>
 
-      <p>As this calculation assume 100% offset account so it does not need to update the loan balance every month. The
-        principal loan repayment will go into the offset account balance instead.</p>
+      <section id="explaination">
+        <h4>Principal repayment</h4>
+        <p>The amount you have to repay to your principal loan every month. This amount does not include the monthly
+          interest.
+        </p>
+        <ul>
+          <li>Loan amount: 500,000 / Loan term: 30 years = <strong>1,388.89</strong> per month</li>
+        </ul>
+
+        <h4>Interest</h4>
+        <p>
+          Interest is calculated and accummuated daily and paid at the end of each month. For example:
+        </p>
+        <ul>
+          <li>Loan amount: 500,000</li>
+          <li>Interest per annum: 6%</li>
+          <li>Daily interest: 500,000 * 6% / 365 = <strong>82.19</strong> </li>
+          <li>Interest paid at the end of a 28-day month: 82.19 * 28 = <strong>2,301.32</strong></li>
+        </ul>
+
+        <h4>Offset account</h4>
+        <p>
+          A savings account that will offset the loan amount. For example: if loan amount is 500,000 and
+          offset account balance is 50,000. Then daily interest will be calculated as <strong>450,000 * interest rate /
+            365 days</strong>
+        </p>
+      </section>
+
+      <hr />
 
       <p>
         Click on a sample scenario and Calculate button to see how it works:
@@ -107,6 +130,13 @@
               <input type="number" step="any" class="form-control" placeholder="5" ng-model="interestRate">
               <span class="input-group-addon">%</span>
             </div>
+
+            <!-- <label>
+              <input type="radio" ng-model="loanOption" ng-value=0> Interest only
+            </label>
+            <label>
+              <input type="radio" ng-model="loanOption" ng-value=1> Principal & interest
+            </label> -->
           </div>
 
           <div class="col-sm-1">
@@ -120,19 +150,19 @@
               <span class="input-group-addon fixed"><span class="text-success">Offset acct
                   balance</span></span>
               <input type="number" class="form-control" placeholder="20000" ng-model="offsetBalance">
-              <span class="input-group-addon">.00</span>
+              <span class="input-group-addon">at the beginning</span>
             </div>
 
             <div class="input-group">
-              <span class="input-group-addon fixed"><span class="text-success">Monthly earn</span></span>
+              <span class="input-group-addon fixed"><span class="text-success">All income</span></span>
               <input type="number" class="form-control" placeholder="7000" ng-model="monthlyIncome">
-              <span class="input-group-addon">.00</span>
+              <span class="input-group-addon">per month</span>
             </div>
 
             <div class="input-group">
-              <span class="input-group-addon fixed"><span class="text-danger">Monthly spend</span></span>
+              <span class="input-group-addon fixed"><span class="text-danger">All expenses</span></span>
               <input type="number" class="form-control" placeholder="3000" ng-model="monthlyExpense">
-              <span class="input-group-addon">.00</span>
+              <span class="input-group-addon">per month</span>
             </div>
 
             <div class="input-group">
@@ -157,7 +187,8 @@
               <div ng-if="accruedOffsetBalance > 0">
                 <span class="text-success">You could pay off your mortgage after <strong>{{ monthlyDataArray.length / 12
                     | number : 2}} years.</strong></span>
-                <span>Total interest paid is {{ accruedInterestBalance | number: 2 }}</span>
+                <span>Total interest paid is <strong class="text-danger">{{ accruedInterestBalance | number: 2
+                    }}</strong></span>
               </div>
 
               <div ng-if="accruedOffsetBalance <= 0" class="text-danger">
@@ -172,15 +203,19 @@
               <table class="table">
                 <caption>Monthly break-down</caption>
                 <tr>
-                  <th width="15%" class="text-right">Month end</th>
-                  <th width="30%" class="text-right">Offset account balance</th>
-                  <th width="30%" class="text-right">Interest paid</th>
-                  <th width="25%" class="text-right">Total interest paid</th>
+                  <th class="text-right">Month end</th>
+                  <th class="text-right">Accrued offset acct balance</th>
+                  <th class="text-right">Remaining loan balance</th>
+                  <th class="text-right">Interest paid in month</th>
+                  <th class="text-right">Total interest paid</th>
                 </tr>
                 <tr ng-repeat="monthlyData in monthlyDataArray">
                   <td class="text-right">{{ monthlyData.date }}</td>
                   <td class="text-right">{{ monthlyData.totalOffset | number: 2 }}</td>
-                  <td class="text-right">{{ monthlyData.interestPaid | number: 2}}</td>
+                  <td class="text-right">{{ monthlyData.loanBalance | number: 2}}</td>
+                  <td class="text-right">
+                    {{ monthlyData.interestPaid | number: 2}}
+                  </td>
                   <td class="text-right">{{ monthlyData.totalInterest | number: 2 }}</td>
                 </tr>
               </table>
