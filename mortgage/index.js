@@ -8,7 +8,7 @@ app.controller('mortgageCtrl', function ($scope) {
       loanBalance: 500000,
       loanTerm: 30,
       interestRate: 5,
-      monthlyExpense: 2000,
+      monthlyExpense: 1500,
       monthlyIncome: 5000,
       offsetBalance: 10000,
     },
@@ -16,7 +16,7 @@ app.controller('mortgageCtrl', function ($scope) {
       loanBalance: 1000000,
       loanTerm: 30,
       interestRate: 5,
-      monthlyExpense: 6000,
+      monthlyExpense: 4000,
       monthlyIncome: 10000,
       offsetBalance: 20000,
     },
@@ -32,7 +32,7 @@ app.controller('mortgageCtrl', function ($scope) {
       loanBalance: 2000000,
       loanTerm: 30,
       interestRate: 5,
-      monthlyExpense: 10000,
+      monthlyExpense: 8000,
       monthlyIncome: 20000,
       offsetBalance: 100000,
     },
@@ -42,8 +42,7 @@ app.controller('mortgageCtrl', function ($scope) {
     var scenario = $scope.scenarios[idx];
     $scope.loanBalance = scenario.loanBalance;
     $scope.loanTerm = scenario.loanTerm;
-    $scope.monthlyPrincipalRepayment =
-      scenario.loanBalance / scenario.loanTerm / 12;
+    $scope.monthlyPrincipalRepayment = $scope.calcMonthlyPrincipalRepayment();
     $scope.interestRate = scenario.interestRate;
     $scope.monthlyExpense = scenario.monthlyExpense;
     $scope.monthlyIncome = scenario.monthlyIncome;
@@ -51,12 +50,12 @@ app.controller('mortgageCtrl', function ($scope) {
     $scope.monthlyDataArray = [];
   };
 
-  $scope.$watch('loanBalance', function (newValue, oldValue) {
-    updateMonthlyPrincipalRepayment();
+  $scope.$watch(['loanBalance'], function (newValue, oldValue) {
+    $scope.monthlyPrincipalRepayment = $scope.calcMonthlyPrincipalRepayment();
   });
 
   $scope.$watch('loanTerm', function (newValue, oldValue) {
-    updateMonthlyPrincipalRepayment();
+    $scope.monthlyPrincipalRepayment = $scope.calcMonthlyPrincipalRepayment();
   });
 
   $scope.calculate = function () {
@@ -80,10 +79,9 @@ app.controller('mortgageCtrl', function ($scope) {
     $scope.accruedInterestBalance = results.accruedInterest;
   };
 
-  function updateMonthlyPrincipalRepayment() {
-    $scope.monthlyPrincipalRepayment =
-      $scope.loanBalance / $scope.loanTerm / 12;
-  }
+  $scope.calcMonthlyPrincipalRepayment = function () {
+    return Math.round($scope.loanBalance / $scope.loanTerm / 12);
+  };
 
   function calcDailyInterest(
     currentLoanBalance,
