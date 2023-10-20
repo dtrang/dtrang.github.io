@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mortgage calculator</title>
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+    integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"
+    integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
   <script src="https://momentjs.com/downloads/moment.min.js"></script>
   <script src="index.js"></script>
@@ -54,123 +57,149 @@
 
 <body>
 
-<header></header>
+  <header></header>
 
-<main class="container" ng-app="mortgageApp" ng-cloak>
-  <div ng-controller="mortgageCtrl" style="padding: 20px;">
+  <main class="container" ng-app="mortgageApp" ng-cloak>
+    <div ng-controller="mortgageCtrl" style="padding: 20px;">
 
-    <h3>Simple mortgage calculation with 100% offset account</h3>
-    <hr/>
+      <h3>Simple mortgage calculation with 100% offset account</h3>
+      <hr />
 
-    <p>
-      Interest is calculated daily and paid at the end of each month. You are considered to pay off your mortgage when your offset account balance outperforms your remaining loan balance.
-    </p>
+      <p>
+        Interest is calculated daily and paid at the end of each month. You are considered to pay off your mortgage when
+        your offset account balance outperforms your remaining loan balance.
+      </p>
 
-    <p>As this calculation assume 100% offset account so it does not need to update the loan balance every month. The principal loan repayment will go into the offset account balance instead.</p>
+      <p>As this calculation assume 100% offset account so it does not need to update the loan balance every month. The
+        principal loan repayment will go into the offset account balance instead.</p>
 
-    <p>
-      Click on a sample scenario and Calculate button to see how it works:
-    </p>
+      <p>
+        Click on a sample scenario and Calculate button to see how it works:
+      </p>
 
-    <p>
-      <a ng-click="setScenario($index)" href="javascript:void(0);" style="margin-right: 20px;" ng-repeat="s in scenarios">
-        Scenario {{ $index + 1 }}
-      </a>
-    </p>
+      <p>
+        <a ng-click="setScenario($index)" href="javascript:void(0);" style="margin-right: 20px;"
+          ng-repeat="s in scenarios">
+          Scenario {{ $index + 1 }}
+        </a>
+      </p>
 
-    <form style="margin-top: 20px;">
+      <form style="margin-top: 20px;">
 
-      <div class="row">
-        <div class="col-sm-4">
-          <div class="input-group">
-            <span class="input-group-addon fixed"><span class="text-danger">Loan amount remaining</span></span>
-            <input type="number" class="form-control" placeholder="500000" ng-model="loanBalance">
-            <span class="input-group-addon">.00</span>
+        <div class="row">
+          <div class="col-sm-4">
+            <h4>Your loan</h4>
+
+            <div class="input-group">
+              <span class="input-group-addon fixed"><span class="text-danger">Loan amount</span></span>
+              <input type="number" class="form-control" placeholder="500000" ng-model="loanBalance">
+              <span class="input-group-addon">.00</span>
+            </div>
+
+            <div class="input-group">
+              <span class="input-group-addon fixed"><span class="text-danger">Loan term in years</span></span>
+              <input type="number" class="form-control" placeholder="30" ng-model="loanTerm">
+              <span class="input-group-addon">years</span>
+            </div>
+
+            <div class="input-group">
+              <span class="input-group-addon fixed">Annual interest rate</span>
+              <input type="number" step="any" class="form-control" placeholder="5" ng-model="interestRate">
+              <span class="input-group-addon">%</span>
+            </div>
           </div>
 
-          <div class="input-group">
-            <span class="input-group-addon fixed">Annual interest rate</span>
-            <input type="number" step="any" class="form-control" placeholder="5" ng-model="interestRate">
-            <span class="input-group-addon">%</span>
+          <div class="col-sm-1">
+
           </div>
+
+          <div class="col-sm-7">
+            <h4>Your circumstances</h4>
+
+            <div class="input-group">
+              <span class="input-group-addon fixed"><span class="text-success">Offset acct
+                  balance</span></span>
+              <input type="number" class="form-control" placeholder="20000" ng-model="offsetBalance">
+              <span class="input-group-addon">.00</span>
+            </div>
+
+            <div class="input-group">
+              <span class="input-group-addon fixed"><span class="text-success">Monthly earn</span></span>
+              <input type="number" class="form-control" placeholder="7000" ng-model="monthlyIncome">
+              <span class="input-group-addon">.00</span>
+            </div>
+
+            <div class="input-group">
+              <span class="input-group-addon fixed"><span class="text-danger">Monthly spend</span></span>
+              <input type="number" class="form-control" placeholder="3000" ng-model="monthlyExpense">
+              <span class="input-group-addon">.00</span>
+            </div>
+
+            <div class="input-group">
+              <span class="input-group-addon fixed"><span class="text-danger">Principal repayment</span></span>
+              <p class="form-control">{{ monthlyPrincipalRepayment | number: 2 }}</p>
+              <span class="input-group-addon">per month</span>
+            </div>
+          </div>
+
         </div>
-
-        <div class="col-sm-4">
-          <div class="input-group">
-            <span class="input-group-addon fixed"><span class="text-danger">Monthly spend</span></span>
-            <input type="number"  class="form-control" placeholder="3000" ng-model="monthlyExpense">
-            <span class="input-group-addon">.00</span>
-          </div>
-        </div>
-
-        <div class="col-sm-4">
-          <div class="input-group">
-            <span class="input-group-addon fixed"><span class="text-success">Monthly earn</span></span>
-            <input type="number"  class="form-control" placeholder="7000" ng-model="monthlyIncome">
-            <span class="input-group-addon">.00</span>
-          </div>
-
-          <div class="input-group">
-            <span class="input-group-addon fixed"><span class="text-success">Offset account balance</span></span>
-            <input type="number"  class="form-control" placeholder="20000" ng-model="offsetBalance">
-            <span class="input-group-addon">.00</span>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="row">
-        <div class="col-sm-12">
-          <button class="btn btn-danger" ng-click="calculate()">Calculate</button>
-        </div>
-      </div>
-
-      <div ng-if="monthlyDataArray.length > 0">
 
         <div class="row">
           <div class="col-sm-12">
-            <div ng-if="accruedOffsetBalance > 0">
-              <span class="text-success">You could pay off your mortgage after <strong>{{ monthlyDataArray.length / 12 | number : 2}} years.</strong></span>
-              <span>Total interest paid is {{ accruedInterestBalance | number: 2 }}</span>
-            </div>
-
-            <div ng-if="accruedOffsetBalance <= 0" class="text-danger">
-              You will never pay off your mortgage. You're gonna run dry after <strong>{{ monthlyDataArray.length / 12 | number: 2}} years</strong>
-            </div>
+            <button class="btn btn-danger" ng-click="calculate()">Calculate</button>
           </div>
         </div>
 
-        <div class="row">
-          <div class="col-sm-12">
-            <table class="table">
-              <caption>Monthly break-down</caption>
-              <tr>
-                <th width="15%" class="text-right">Month end</th>
-                <th width="30%" class="text-right">Offset account balance</th>
-                <th width="30%" class="text-right">Interest paid</th>
-                <th width="25%" class="text-right">Total interest paid</th>
-              </tr>
-              <tr ng-repeat="monthlyData in monthlyDataArray">
-                <td class="text-right">{{ monthlyData.date }}</td>
-                <td class="text-right">{{ monthlyData.totalOffset | number: 2 }}</td>
-                <td class="text-right">{{ monthlyData.interestPaid | number: 2}}</td>
-                <td class="text-right">{{ monthlyData.totalInterest | number: 2 }}</td>
-              </tr>
-            </table>
+        <div ng-if="monthlyDataArray.length > 0">
+
+          <div class="row">
+            <div class="col-sm-12">
+              <div ng-if="accruedOffsetBalance > 0">
+                <span class="text-success">You could pay off your mortgage after <strong>{{ monthlyDataArray.length / 12
+                    | number : 2}} years.</strong></span>
+                <span>Total interest paid is {{ accruedInterestBalance | number: 2 }}</span>
+              </div>
+
+              <div ng-if="accruedOffsetBalance <= 0" class="text-danger">
+                You will never pay off your mortgage. You're gonna run dry after <strong>{{ monthlyDataArray.length / 12
+                  | number: 2}} years</strong>
+              </div>
+            </div>
           </div>
+
+          <div class="row">
+            <div class="col-sm-12">
+              <table class="table">
+                <caption>Monthly break-down</caption>
+                <tr>
+                  <th width="15%" class="text-right">Month end</th>
+                  <th width="30%" class="text-right">Offset account balance</th>
+                  <th width="30%" class="text-right">Interest paid</th>
+                  <th width="25%" class="text-right">Total interest paid</th>
+                </tr>
+                <tr ng-repeat="monthlyData in monthlyDataArray">
+                  <td class="text-right">{{ monthlyData.date }}</td>
+                  <td class="text-right">{{ monthlyData.totalOffset | number: 2 }}</td>
+                  <td class="text-right">{{ monthlyData.interestPaid | number: 2}}</td>
+                  <td class="text-right">{{ monthlyData.totalInterest | number: 2 }}</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+
         </div>
 
-      </div>
+      </form>
+    </div>
+  </main>
 
-    </form>
-  </div>
-</main>
-
-<footer>
-  &#169; <script>document.write(new Date().getFullYear())</script>
-</footer>
+  <footer>
+    &#169;
+    <script>document.write(new Date().getFullYear())</script>
+  </footer>
 
 
 
 </body>
+
 </html>
