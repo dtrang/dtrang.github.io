@@ -59,52 +59,92 @@ app.controller('mortgageCtrl', function ($scope) {
     updateMonthlyPrincipalRepayment();
   });
 
+  $scope.calculate = function () {
+    $scope.loanStartDate = moment(getLastDayOfMonth(new Date()))
+      .add(1, 'days')
+      .toDate();
+
+    const results = calculatePrincipalAndInterest(
+      $scope.loanBalance,
+      $scope.interestRate,
+      $scope.loanStartDate,
+      $scope.offsetBalance,
+      $scope.monthlyIncome,
+      $scope.monthlyExpense,
+      $scope.monthlyPrincipalRepayment
+    );
+
+    $scope.accruedOffsetBalance = results.accruedOffsetBalance;
+    $scope.monthlyDataArray = results.monthlyDataArray;
+    $scope.accruedInterestBalance = results.accruedInterest;
+  };
+
   function updateMonthlyPrincipalRepayment() {
     $scope.monthlyPrincipalRepayment =
       $scope.loanBalance / $scope.loanTerm / 12;
   }
 
-  $scope.calculate = function () {
-    var annualInterestRate = $scope.interestRate / 100;
-    var runningLoanBalance = $scope.loanBalance;
+  function calcDailyInterest(
+    currentLoanBalance,
+    annualInterestRate,
+    offsetAccountBalance
+  ) {
+    return (
+      ((currentLoanBalance - offsetAccountBalance) * annualInterestRate) / 365
+    );
+  }
 
-    $scope.accruedOffsetBalance = $scope.offsetBalance;
-    $scope.accruedInterestBalance = 0.0;
-    $scope.monthlyDataArray = [];
+  function calculatePrincipalAndInterest(
+    loanBalance,
+    interestRate,
+    loanStartDate,
+    offsetAccountStartBalance,
+    monthlyIncome,
+    monthlyExpenses,
+    monthlyPrincipalRepayment,
+    isPrincipalAndInterest = true
+  ) {
+    const annualInterestRate = interestRate / 100;
 
-    var date = new Date();
+    var runningLoanBalance = loanBalance;
+    var accruedOffsetBalance = offsetAccountStartBalance;
+    var accruedInterest = 0.0;
     var monthlyAccruedInterest = 0.0;
+    var date = loanStartDate;
+    var monthlyDataArray = [];
+
     while (
-      runningLoanBalance >= $scope.accruedOffsetBalance &&
-      $scope.accruedOffsetBalance >= 0
+      runningLoanBalance >= accruedOffsetBalance &&
+      accruedOffsetBalance >= 0
     ) {
       date = moment(date).add(1, 'days').toDate();
 
-      monthlyAccruedInterest +=
-        ((runningLoanBalance - $scope.accruedOffsetBalance) *
-          annualInterestRate) /
-        365;
+      monthlyAccruedInterest += calcDailyInterest(
+        runningLoanBalance,
+        annualInterestRate,
+        isPrincipalAndInterest ? accruedOffsetBalance : 0
+      );
 
       // Finish calculation if current date is the end of the month
       if (format(getLastDayOfMonth(date)) === format(date)) {
         // Remaining money left after everything
         var remainingMoney =
-          $scope.monthlyIncome -
-          $scope.monthlyExpense -
-          $scope.monthlyPrincipalRepayment -
-          monthlyAccruedInterest;
+          monthlyIncome -
+          monthlyExpenses -
+          monthlyAccruedInterest -
+          (isPrincipalAndInterest ? monthlyPrincipalRepayment : 0);
 
         // Update accrued amounts, running loan balance
-        $scope.accruedOffsetBalance += remainingMoney;
-        $scope.accruedInterestBalance += monthlyAccruedInterest;
-        runningLoanBalance -= $scope.monthlyPrincipalRepayment;
+        accruedOffsetBalance += remainingMoney;
+        accruedInterest += monthlyAccruedInterest;
+        runningLoanBalance -= monthlyPrincipalRepayment;
 
         // Push data of the month to the array
-        $scope.monthlyDataArray.push({
+        monthlyDataArray.push({
           date: format(date),
           interestPaid: monthlyAccruedInterest,
-          totalOffset: $scope.accruedOffsetBalance,
-          totalInterest: $scope.accruedInterestBalance,
+          totalOffset: accruedOffsetBalance,
+          totalInterest: accruedInterest,
           loanBalance: runningLoanBalance,
         });
 
@@ -112,7 +152,9 @@ app.controller('mortgageCtrl', function ($scope) {
         monthlyAccruedInterest = 0;
       }
     }
-  };
+
+    return { monthlyDataArray, accruedInterest, accruedOffsetBalance };
+  }
 
   function getLastDayOfMonth(date) {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0);
