@@ -198,16 +198,22 @@
 
           <div class="row">
             <div class="col-sm-12">
-              <div ng-if="accruedOffsetBalance > 0">
+              <div ng-if="accruedOffsetBalance <= 0" class="text-danger">
+                You will never pay off your mortgage. You're gonna run dry after <strong>{{ monthlyDataArray.length / 12
+                  | number: 2}} years</strong>
+              </div>
+
+              <div ng-if="accruedOffsetBalance > 0 && accruedOffsetBalance < runningLoanBalance">
+                <p class="text-danger">You will never pay off your mortgage within {{ loanTerm }} years.</p>
+                <p>Your offset account will be {{ accruedOffsetBalance | number: 2 }}</p>
+                <p>Your loan balance will be {{ runningLoanBalance | number: 2 }}</p>
+              </div>
+
+              <div ng-if="accruedOffsetBalance > runningLoanBalance">
                 <span class="text-success">You could pay off your mortgage after <strong>{{ monthlyDataArray.length / 12
                     | number : 2}} years.</strong></span>
                 <span>Total interest paid is <strong class="text-danger">{{ accruedInterestBalance | number: 2
                     }}</strong></span>
-              </div>
-
-              <div ng-if="accruedOffsetBalance <= 0" class="text-danger">
-                You will never pay off your mortgage. You're gonna run dry after <strong>{{ monthlyDataArray.length / 12
-                  | number: 2}} years</strong>
               </div>
             </div>
           </div>

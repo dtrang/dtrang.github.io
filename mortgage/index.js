@@ -7,7 +7,7 @@ app.controller('mortgageCtrl', function ($scope) {
     {
       loanBalance: 500000,
       loanTerm: 30,
-      interestRate: 5,
+      interestRate: 5.8,
       monthlyExpense: 1500,
       monthlyIncome: 5000,
       offsetBalance: 10000,
@@ -15,7 +15,7 @@ app.controller('mortgageCtrl', function ($scope) {
     {
       loanBalance: 1000000,
       loanTerm: 30,
-      interestRate: 5,
+      interestRate: 5.8,
       monthlyExpense: 4000,
       monthlyIncome: 10000,
       offsetBalance: 20000,
@@ -23,7 +23,7 @@ app.controller('mortgageCtrl', function ($scope) {
     {
       loanBalance: 1500000,
       loanTerm: 30,
-      interestRate: 5,
+      interestRate: 5.8,
       monthlyExpense: 8000,
       monthlyIncome: 15000,
       offsetBalance: 0,
@@ -31,7 +31,7 @@ app.controller('mortgageCtrl', function ($scope) {
     {
       loanBalance: 2000000,
       loanTerm: 30,
-      interestRate: 5,
+      interestRate: 5.8,
       monthlyExpense: 8000,
       monthlyIncome: 20000,
       offsetBalance: 100000,
@@ -77,6 +77,7 @@ app.controller('mortgageCtrl', function ($scope) {
 
     const results = calculatePrincipalAndInterest(
       $scope.loanBalance,
+      $scope.loanTerm,
       $scope.interestRate,
       $scope.loanStartDate,
       $scope.offsetBalance,
@@ -89,6 +90,7 @@ app.controller('mortgageCtrl', function ($scope) {
     $scope.accruedOffsetBalance = results.accruedOffsetBalance;
     $scope.monthlyDataArray = results.monthlyDataArray;
     $scope.accruedInterestBalance = results.accruedInterest;
+    $scope.runningLoanBalance = results.runningLoanBalance;
   };
 
   function calcMonthlyRepayment(loanAmount, loanYears, annualInterestRate) {
@@ -112,6 +114,7 @@ app.controller('mortgageCtrl', function ($scope) {
 
   function calculatePrincipalAndInterest(
     loanBalance,
+    loanTerm,
     interestRate,
     loanStartDate,
     offsetAccountStartBalance,
@@ -127,11 +130,13 @@ app.controller('mortgageCtrl', function ($scope) {
     var accruedInterest = 0.0;
     var monthlyAccruedInterest = 0.0;
     var date = loanStartDate;
+    const loanEndDate = moment(date).add(loanTerm, 'years').toDate();
     var monthlyDataArray = [];
 
     while (
       runningLoanBalance >= accruedOffsetBalance &&
-      accruedOffsetBalance >= 0
+      accruedOffsetBalance >= 0 &&
+      !moment(date).isAfter(loanEndDate)
     ) {
       date = moment(date).add(1, 'days').toDate();
 
@@ -176,7 +181,12 @@ app.controller('mortgageCtrl', function ($scope) {
       }
     }
 
-    return { monthlyDataArray, accruedInterest, accruedOffsetBalance };
+    return {
+      monthlyDataArray,
+      accruedInterest,
+      accruedOffsetBalance,
+      runningLoanBalance,
+    };
   }
 
   function getLastDayOfMonth(date) {
