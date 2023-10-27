@@ -121,7 +121,6 @@ app.controller('mortgageCtrl', function ($scope) {
     isPrincipalAndInterest = true
   ) {
     const annualInterestRate = interestRate / 100;
-    monthlyRepayment = isPrincipalAndInterest ? monthlyRepayment : 0;
 
     var runningLoanBalance = loanBalance;
     var accruedOffsetBalance = offsetAccountStartBalance;
@@ -145,14 +144,19 @@ app.controller('mortgageCtrl', function ($scope) {
       // Finish calculation if current date is the end of the month
       if (format(getLastDayOfMonth(date)) === format(date)) {
         // Running loan balance
-        runningLoanBalance =
-          runningLoanBalance + monthlyAccruedInterest - monthlyRepayment;
+        if (isPrincipalAndInterest) {
+          runningLoanBalance += monthlyAccruedInterest - monthlyRepayment;
+        }
 
         // Remaining money left after everything
-        var remainingMoney =
-          monthlyIncome -
-          monthlyExpenses -
-          (monthlyRepayment === 0 ? monthlyAccruedInterest : monthlyRepayment);
+        var remainingMoney = monthlyIncome - monthlyExpenses;
+
+        if (isPrincipalAndInterest) {
+          runningLoanBalance += monthlyAccruedInterest - monthlyRepayment;
+          remainingMoney -= monthlyRepayment;
+        } else {
+          remainingMoney -= monthlyAccruedInterest;
+        }
 
         // Update accrued amounts
         accruedOffsetBalance += remainingMoney;
