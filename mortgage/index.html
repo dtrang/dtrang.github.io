@@ -174,17 +174,13 @@
 
             <div ng-show="loanOption === 1">
               <p>
-                Default principal repayment: {{ loanBalance | number: 2 }} / {{ loanTerm }} years / 12 months = <span
-                  class="text-danger">{{ calcMonthlyPrincipalRepayment() }}</span>
-              </p>
-              <p>
-                You can change it to suit your situation in this simulation. However this amount is set by your lender
-                most of the time.
+                Monthly repayment amount (P&I) most likey set by your lender base on loan amount, loan terms and
+                interest rate.
               </p>
             </div>
             <div class="input-group" ng-show="loanOption === 1">
-              <span class="input-group-addon fixed"><span class="text-danger">Principal repayment</span></span>
-              <input type="number" class="form-control" ng-model="monthlyPrincipalRepayment">
+              <span class="input-group-addon fixed"><span class="text-danger">Monthly repayment</span></span>
+              <input type="number" class="form-control" ng-model="monthyRepayment">
               <span class="input-group-addon">per month</span>
             </div>
           </div>
