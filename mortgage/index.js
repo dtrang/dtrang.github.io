@@ -50,7 +50,7 @@ app.controller('mortgageCtrl', function ($scope) {
     $scope.monthyRepayment = 1111;
   };
 
-  $scope.$watch(['loanBalance'], function (newValue, oldValue) {
+  $scope.$watch('loanBalance', function (newValue, oldValue) {
     $scope.monthyRepayment = $scope.calcMonthlyRepayment();
   });
 
