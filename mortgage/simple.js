@@ -5,42 +5,32 @@ app.controller('mortgageCtrl', function ($scope) {
 
   $scope.scenarios = [
     {
-      loanBalance: 500000,
+      purchaseValue: 1200000,
+      lvrValue: 100,
+      loanBalance: 1200000,
       loanTerm: 30,
-      interestRate: 5.8,
-      monthlyExpense: 3000,
-      monthlyIncome: 6000,
-      offsetBalance: 10000,
+      interestRate: 6.25,
+      monthlyExpense: 8000,
+      monthlyIncome: 24000,
+      offsetBalance: 200000,
     },
     {
-      loanBalance: 1000000,
-      loanTerm: 30,
-      interestRate: 5.8,
-      monthlyExpense: 4000,
-      monthlyIncome: 10000,
-      offsetBalance: 20000,
-    },
-    {
+      purchaseValue: 1500000,
+      lvrValue: 100,
       loanBalance: 1500000,
       loanTerm: 30,
-      interestRate: 5.8,
+      interestRate: 6.25,
       monthlyExpense: 8000,
-      monthlyIncome: 15000,
-      offsetBalance: 0,
-    },
-    {
-      loanBalance: 2000000,
-      loanTerm: 30,
-      interestRate: 5.8,
-      monthlyExpense: 8000,
-      monthlyIncome: 20000,
-      offsetBalance: 100000,
+      monthlyIncome: 24000,
+      offsetBalance: 200000,
     },
   ];
 
   $scope.setScenario = function (idx) {
     var scenario = $scope.scenarios[idx];
-    $scope.loanBalance = scenario.loanBalance;
+    $scope.purchaseValue = scenario.purchaseValue;
+    $scope.lvrValue = scenario.lvrValue;
+    $scope.loanBalance = scenario.purchaseValue * (scenario.lvrValue / 100);
     $scope.loanTerm = scenario.loanTerm;
     $scope.interestRate = scenario.interestRate;
     $scope.monthlyExpense = scenario.monthlyExpense;
@@ -49,6 +39,14 @@ app.controller('mortgageCtrl', function ($scope) {
     $scope.monthlyDataArray = [];
     $scope.monthyRepayment = $scope.calcMonthlyRepayment();
   };
+
+  $scope.$watch('purchaseValue', function (newValue, oldValue) {
+    $scope.loanBalance = newValue * ($scope.lvrValue / 100);
+  });
+
+  $scope.$watch('lvrValue', function (newValue, oldValue) {
+    $scope.loanBalance = $scope.purchaseValue * (newValue / 100);
+  });
 
   $scope.$watch('loanBalance', function (newValue, oldValue) {
     $scope.monthyRepayment = $scope.calcMonthlyRepayment();
@@ -111,11 +109,16 @@ app.controller('mortgageCtrl', function ($scope) {
     );
   }
 
-  function calculateLengthOfRepayment(loanAmount, interestRate, monthlyRepayment) {
+  function calculateLengthOfRepayment(
+    loanAmount,
+    interestRate,
+    monthlyRepayment
+  ) {
     const monthlyInterestRate = interestRate / 12 / 100;
     return Math.round(
-      Math.log(monthlyRepayment / (monthlyRepayment - monthlyInterestRate * loanAmount)) /
-        Math.log(1 + monthlyInterestRate)
+      Math.log(
+        monthlyRepayment / (monthlyRepayment - monthlyInterestRate * loanAmount)
+      ) / Math.log(1 + monthlyInterestRate)
     );
   }
 
