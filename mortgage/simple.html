@@ -43,6 +43,7 @@
     .input-group-addon.fixed {
       width: 180px;
       text-align: left;
+      line-height: 1.4em;
     }
 
     .row {
@@ -109,7 +110,18 @@
               <span class="input-group-addon fixed"> {{ stampDuty | number: 2 }}</span>
             </div>
 
+            <hr />
+
             <h4>Your loan</h4>
+
+            <div class="input-group">
+              <label style="margin-right: 10px;">
+                <input type="radio" ng-model="loanOption" ng-value=1> Principal & interest
+              </label>
+              <label>
+                <input type="radio" ng-model="loanOption" ng-value=0> Interest only
+              </label>
+            </div>
 
             <div class="input-group">
               <span class="input-group-addon fixed"><span class="text-danger">Loan amount</span></span>
@@ -129,13 +141,6 @@
               <span class="input-group-addon">%</span>
             </div>
 
-            <h5>Loan option</h5>
-            <label style="margin-right: 10px;">
-              <input type="radio" ng-model="loanOption" ng-value=1> Principal & interest
-            </label>
-            <label>
-              <input type="radio" ng-model="loanOption" ng-value=0> Interest only
-            </label>
           </div>
 
           <div class="col-sm-1">
