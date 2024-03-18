@@ -30,6 +30,8 @@ app.controller('mortgageCtrl', function ($scope) {
     var scenario = $scope.scenarios[idx];
     $scope.purchaseValue = scenario.purchaseValue;
     $scope.lvrValue = scenario.lvrValue;
+    $scope.stampDuty = calculateStampDuty(scenario.purchaseValue);
+
     $scope.loanBalance = scenario.purchaseValue * (scenario.lvrValue / 100);
     $scope.loanTerm = scenario.loanTerm;
     $scope.interestRate = scenario.interestRate;
@@ -42,6 +44,7 @@ app.controller('mortgageCtrl', function ($scope) {
 
   $scope.$watch('purchaseValue', function (newValue, oldValue) {
     $scope.loanBalance = newValue * ($scope.lvrValue / 100);
+    $scope.stampDuty = calculateStampDuty(newValue);
   });
 
   $scope.$watch('lvrValue', function (newValue, oldValue) {
@@ -215,6 +218,22 @@ app.controller('mortgageCtrl', function ($scope) {
 
   function format(date) {
     return moment(date).format('DD MMM YYYY');
+  }
+
+  function calculateStampDuty(propertyValue) {
+    if (propertyValue <= 16000) {
+      return Math.max(10, propertyValue * 0.0125);
+    } else if (propertyValue <= 35000) {
+      return 200 + (propertyValue - 16000) * 0.015;
+    } else if (propertyValue <= 93000) {
+      return 485 + (propertyValue - 35000) * 0.0175;
+    } else if (propertyValue <= 351000) {
+      return 1500 + (propertyValue - 93000) * 0.035;
+    } else if (propertyValue <= 1168000) {
+      return 10530 + (propertyValue - 351000) * 0.045;
+    } else {
+      return 47295 + (propertyValue - 1168000) * 0.055;
+    }
   }
 
   $scope.setScenario(0);

@@ -80,7 +80,7 @@
       <form style="margin-top: 20px;">
 
         <div class="row">
-          <div class="col-sm-4">
+          <div class="col-sm-5">
             <h4>Your purchase</h4>
 
             <div class="input-group">
@@ -93,6 +93,11 @@
               <span class="input-group-addon fixed"><span class="text-danger">LVR</span></span>
               <input type="number" class="form-control" placeholder="500000" ng-model="lvrValue">
               <span class="input-group-addon">%</span>
+            </div>
+
+            <div class="input-group">
+              <span class="input-group-addon fixed"><span class="text-danger">Stamp duty</span></span>
+              <span class="form-control"> {{ stampDuty | number: 2 }}</span>
             </div>
 
             <h4>Your loan</h4>
@@ -128,7 +133,7 @@
 
           </div>
 
-          <div class="col-sm-7">
+          <div class="col-sm-6">
             <h4>Your circumstances</h4>
 
             <div class="input-group">
