@@ -52,6 +52,10 @@
     .text-right {
       text-align: right;
     }
+
+    .text-bold {
+      font-weight: 600;
+    }
   </style>
 </head>
 
@@ -96,13 +100,13 @@
             </div>
 
             <div class="input-group">
-              <span class="input-group-addon fixed"><span class="text-danger">Stamp duty</span></span>
-              <span class="form-control"> {{ stampDuty | number: 2 }}</span>
+              <span class="input-group-addon fixed"><span class="text-danger">Purchase expenses</span></span>
+              <input type="number" class="form-control" placeholder="3000" ng-model="purchaseExpenses">
             </div>
 
             <div class="input-group">
-              <span class="input-group-addon fixed"><span class="text-danger">Purchase expenses</span></span>
-              <span class="form-control"> {{ purchaseExpenses | number: 2 }}</span>
+              <span class="input-group-addon fixed"><span class="text-danger">Stamp duty</span></span>
+              <span class="input-group-addon fixed"> {{ stampDuty | number: 2 }}</span>
             </div>
 
             <h4>Your loan</h4>
@@ -149,8 +153,7 @@
             <div class="input-group">
               <span class="input-group-addon fixed"><span class="text-success">Offset acct
                   balance</span></span>
-              <input type="number" class="form-control" placeholder="20000" ng-model="offsetBalance">
-              <span class="input-group-addon">to start</span>
+              <span class="input-group-addon fixed">{{ offsetBalance | number: 2 }}</span>
             </div>
 
             <div class="input-group">
@@ -173,8 +176,7 @@
             </div>
             <div class="input-group" ng-show="loanOption === 1">
               <span class="input-group-addon fixed"><span class="text-danger">Monthly repayment</span></span>
-              <input type="number" class="form-control" ng-model="monthyRepayment">
-              <span class="input-group-addon">per month</span>
+              <span class="input-group-addon fixed">{{ monthyRepayment | number: 2 }}</span>
             </div>
           </div>
 
@@ -206,7 +208,8 @@
                 <span class="text-success">You could pay off your mortgage after <strong>{{ monthlyDataArray.length / 12
                     | number : 2}} years.</strong></span>
                 <span>Total interest paid is <strong class="text-danger">{{ accruedInterestBalance | number: 2
-                    }}</strong></span>
+                    }}</strong> (<strong>{{(accruedInterestBalance / loanBalance * 100) | number: 2}}%</strong> of
+                  <strong>{{loanBalance | number: 0}}</strong>)</span>
               </div>
             </div>
           </div>
@@ -223,7 +226,10 @@
                   <th class="text-right">Total interest paid</th>
                 </tr>
                 <tr ng-repeat="monthlyData in monthlyDataArray">
-                  <td class="text-right">{{ monthlyData.date }}</td>
+                  <td class="text-right">
+                    <span class="{{ monthlyData.date.indexOf('31 Dec') === 0 ? 'text-bold' : '' }}">{{ monthlyData.date
+                      }}</span>
+                  </td>
                   <td class="text-right">{{ monthlyData.totalOffset | number: 2 }}</td>
                   <td class="text-right">{{ monthlyData.loanBalance | number: 2}}</td>
                   <td class="text-right">

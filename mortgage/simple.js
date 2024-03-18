@@ -59,6 +59,10 @@ app.controller('mortgageCtrl', function ($scope) {
     $scope.loanBalance = $scope.purchaseValue * (newValue / 100);
   });
 
+  $scope.$watch('purchaseExpenses', function (newValue, oldValue) {
+    $scope.offsetBalance = $scope.savingsValue - $scope.stampDuty - newValue;
+  });
+
   $scope.$watch('loanBalance', function (newValue, oldValue) {
     $scope.monthyRepayment = $scope.calcMonthlyRepayment();
   });
@@ -69,6 +73,11 @@ app.controller('mortgageCtrl', function ($scope) {
 
   $scope.$watch('interestRate', function (newValue, oldValue) {
     $scope.monthyRepayment = $scope.calcMonthlyRepayment();
+  });
+
+  $scope.$watch('savingsValue', function (newValue, oldValue) {
+    $scope.offsetBalance =
+      newValue - $scope.stampDuty - $scope.purchaseExpenses;
   });
 
   $scope.calcMonthlyRepayment = function () {
