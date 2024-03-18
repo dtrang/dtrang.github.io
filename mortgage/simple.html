@@ -100,6 +100,11 @@
               <span class="form-control"> {{ stampDuty | number: 2 }}</span>
             </div>
 
+            <div class="input-group">
+              <span class="input-group-addon fixed"><span class="text-danger">Purchase expenses</span></span>
+              <span class="form-control"> {{ purchaseExpenses | number: 2 }}</span>
+            </div>
+
             <h4>Your loan</h4>
 
             <div class="input-group">
@@ -135,6 +140,11 @@
 
           <div class="col-sm-6">
             <h4>Your circumstances</h4>
+
+            <div class="input-group">
+              <span class="input-group-addon fixed"><span class="text-success">Initial savings</span></span>
+              <input type="number" class="form-control" placeholder="20000" ng-model="savingsValue">
+            </div>
 
             <div class="input-group">
               <span class="input-group-addon fixed"><span class="text-success">Offset acct

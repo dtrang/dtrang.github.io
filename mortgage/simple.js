@@ -7,9 +7,11 @@ app.controller('mortgageCtrl', function ($scope) {
     {
       purchaseValue: 1200000,
       lvrValue: 100,
+      purchaseExpenses: 3000,
       loanBalance: 1200000,
       loanTerm: 30,
       interestRate: 6.25,
+      savingsValue: 300000,
       monthlyExpense: 8000,
       monthlyIncome: 24000,
       offsetBalance: 200000,
@@ -17,9 +19,11 @@ app.controller('mortgageCtrl', function ($scope) {
     {
       purchaseValue: 1500000,
       lvrValue: 100,
+      purchaseExpenses: 3000,
       loanBalance: 1500000,
       loanTerm: 30,
       interestRate: 6.25,
+      savingsValue: 300000,
       monthlyExpense: 8000,
       monthlyIncome: 24000,
       offsetBalance: 200000,
@@ -31,13 +35,17 @@ app.controller('mortgageCtrl', function ($scope) {
     $scope.purchaseValue = scenario.purchaseValue;
     $scope.lvrValue = scenario.lvrValue;
     $scope.stampDuty = calculateStampDuty(scenario.purchaseValue);
+    $scope.purchaseExpenses = scenario.purchaseExpenses;
 
     $scope.loanBalance = scenario.purchaseValue * (scenario.lvrValue / 100);
     $scope.loanTerm = scenario.loanTerm;
     $scope.interestRate = scenario.interestRate;
+
+    $scope.savingsValue = scenario.savingsValue;
     $scope.monthlyExpense = scenario.monthlyExpense;
     $scope.monthlyIncome = scenario.monthlyIncome;
-    $scope.offsetBalance = scenario.offsetBalance;
+    $scope.offsetBalance =
+      $scope.savingsValue - $scope.stampDuty - $scope.purchaseExpenses;
     $scope.monthlyDataArray = [];
     $scope.monthyRepayment = $scope.calcMonthlyRepayment();
   };
