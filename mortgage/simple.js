@@ -52,7 +52,10 @@ app.controller('mortgageCtrl', function ($scope) {
 
   $scope.$watch('purchaseValue', function (newValue, oldValue) {
     $scope.loanBalance = newValue * ($scope.lvrValue / 100);
-    $scope.stampDuty = calculateStampDuty(newValue);
+    var stampDuty = calculateStampDuty(newValue);
+    $scope.stampDuty = stampDuty;
+    $scope.offsetBalance =
+      $scope.savingsValue - stampDuty - $scope.purchaseExpenses;
   });
 
   $scope.$watch('lvrValue', function (newValue, oldValue) {
