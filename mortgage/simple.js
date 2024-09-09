@@ -5,28 +5,24 @@ app.controller('mortgageCtrl', function ($scope) {
 
   $scope.scenarios = [
     {
-      purchaseValue: 1200000,
-      lvrValue: 100,
+      purchaseValue: 1600000,
+      lvrValue: 80,
       purchaseExpenses: 3000,
-      loanBalance: 1200000,
       loanTerm: 30,
-      interestRate: 6.25,
-      savingsValue: 300000,
-      monthlyExpense: 8000,
+      interestRate: 6,
+      savingsValue: 420000,
+      monthlyExpense: 7000,
       monthlyIncome: 24000,
-      offsetBalance: 200000,
     },
     {
-      purchaseValue: 1500000,
+      purchaseValue: 1600000,
       lvrValue: 100,
       purchaseExpenses: 3000,
-      loanBalance: 1500000,
       loanTerm: 30,
-      interestRate: 6.25,
-      savingsValue: 300000,
-      monthlyExpense: 8000,
+      interestRate: 6,
+      savingsValue: 820000,
+      monthlyExpense: 10350,
       monthlyIncome: 24000,
-      offsetBalance: 200000,
     },
   ];
 
@@ -34,8 +30,10 @@ app.controller('mortgageCtrl', function ($scope) {
     var scenario = $scope.scenarios[idx];
     $scope.purchaseValue = scenario.purchaseValue;
     $scope.lvrValue = scenario.lvrValue;
-    $scope.stampDuty = calculateStampDuty(scenario.purchaseValue);
     $scope.purchaseExpenses = scenario.purchaseExpenses;
+    $scope.stampDuty = calculateStampDuty(scenario.purchaseValue);
+    $scope.downPaymentAmount =
+      scenario.purchaseValue * (1 - scenario.lvrValue / 100);
 
     $scope.loanBalance = scenario.purchaseValue * (scenario.lvrValue / 100);
     $scope.loanTerm = scenario.loanTerm;
@@ -44,8 +42,12 @@ app.controller('mortgageCtrl', function ($scope) {
     $scope.savingsValue = scenario.savingsValue;
     $scope.monthlyExpense = scenario.monthlyExpense;
     $scope.monthlyIncome = scenario.monthlyIncome;
-    $scope.offsetBalance =
-      $scope.savingsValue - $scope.stampDuty - $scope.purchaseExpenses;
+    $scope.offsetBalance = calcInitialOffsetBalance(
+      $scope.savingsValue,
+      $scope.stampDuty,
+      $scope.purchaseExpenses,
+      $scope.downPaymentAmount
+    );
     $scope.monthlyDataArray = [];
     $scope.monthyRepayment = $scope.calcMonthlyRepayment();
   };
@@ -54,16 +56,32 @@ app.controller('mortgageCtrl', function ($scope) {
     $scope.loanBalance = newValue * ($scope.lvrValue / 100);
     var stampDuty = calculateStampDuty(newValue);
     $scope.stampDuty = stampDuty;
-    $scope.offsetBalance =
-      $scope.savingsValue - stampDuty - $scope.purchaseExpenses;
+    $scope.offsetBalance = calcInitialOffsetBalance(
+      $scope.savingsValue,
+      stampDuty,
+      $scope.purchaseExpenses,
+      $scope.downPaymentAmount
+    );
   });
 
   $scope.$watch('lvrValue', function (newValue, oldValue) {
     $scope.loanBalance = $scope.purchaseValue * (newValue / 100);
+    $scope.downPaymentAmount = $scope.purchaseValue * (1 - newValue / 100);
+    $scope.offsetBalance = calcInitialOffsetBalance(
+      $scope.savingsValue,
+      $scope.stampDuty,
+      $scope.purchaseExpenses,
+      $scope.downPaymentAmount
+    );
   });
 
   $scope.$watch('purchaseExpenses', function (newValue, oldValue) {
-    $scope.offsetBalance = $scope.savingsValue - $scope.stampDuty - newValue;
+    $scope.offsetBalance = calcInitialOffsetBalance(
+      $scope.savingsValue,
+      $scope.stampDuty,
+      newValue,
+      $scope.downPaymentAmount
+    );
   });
 
   $scope.$watch('loanBalance', function (newValue, oldValue) {
@@ -79,9 +97,17 @@ app.controller('mortgageCtrl', function ($scope) {
   });
 
   $scope.$watch('savingsValue', function (newValue, oldValue) {
-    $scope.offsetBalance =
-      newValue - $scope.stampDuty - $scope.purchaseExpenses;
+    $scope.offsetBalance = calcInitialOffsetBalance(
+      newValue,
+      $scope.stampDuty,
+      $scope.purchaseExpenses,
+      $scope.downPaymentAmount
+    );
   });
+
+  const calcInitialOffsetBalance = (savingsAmount, ...expenses) => {
+    return savingsAmount - expenses.reduce((a, b) => a + b, 0);
+  };
 
   $scope.calcMonthlyRepayment = function () {
     return calcMonthlyRepayment(
@@ -117,15 +143,6 @@ app.controller('mortgageCtrl', function ($scope) {
   function calcMonthlyRepayment(loanAmount, loanYears, annualInterestRate) {
     const monthlyInterestRate = annualInterestRate / 12 / 100;
     const loanMonths = loanYears * 12;
-    return Math.round(
-      (loanAmount * monthlyInterestRate) /
-        (1 - Math.pow(1 + monthlyInterestRate, -loanMonths))
-    );
-  }
-
-  function calculateMonthlyRepayment(loanAmount, years, interestRate) {
-    const monthlyInterestRate = interestRate / 12 / 100;
-    const loanMonths = years * 12;
     return Math.round(
       (loanAmount * monthlyInterestRate) /
         (1 - Math.pow(1 + monthlyInterestRate, -loanMonths))
@@ -191,14 +208,10 @@ app.controller('mortgageCtrl', function ($scope) {
 
       // Finish calculation if current date is the end of the month
       if (format(getLastDayOfMonth(date)) === format(date)) {
-        // Running loan balance
-        if (isPrincipalAndInterest) {
-          runningLoanBalance += monthlyAccruedInterest - monthlyRepayment;
-        }
-
         // Remaining money left after everything
         var remainingMoney = monthlyIncome - monthlyExpenses;
 
+        // Running loan balance
         if (isPrincipalAndInterest) {
           runningLoanBalance += monthlyAccruedInterest - monthlyRepayment;
           remainingMoney -= monthlyRepayment;
@@ -257,4 +270,47 @@ app.controller('mortgageCtrl', function ($scope) {
   }
 
   $scope.setScenario(0);
+});
+
+// Define the custom directive to format the number
+app.directive('numberFormat', function () {
+  return {
+    require: 'ngModel',
+    link: function (scope, element, attrs, ngModelController) {
+      // Function to add commas
+      function formatNumberWithCommas(value) {
+        if (!value) return value;
+        return value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      }
+
+      // Function to remove commas before parsing
+      function removeCommas(value) {
+        return value ? value.replace(/,/g, '') : value;
+      }
+
+      // Render the formatted value in the input field
+      ngModelController.$formatters.push(function (value) {
+        if (!value) return;
+        return formatNumberWithCommas(value);
+      });
+
+      // Parse the user's input by removing commas
+      ngModelController.$parsers.push(function (value) {
+        if (!value) return;
+        var cleanValue = removeCommas(value);
+        if (!isNaN(cleanValue)) {
+          return cleanValue;
+        }
+        return value;
+      });
+
+      // Watch for changes and update the view
+      element.on('input', function () {
+        var formattedValue = formatNumberWithCommas(
+          removeCommas(element.val())
+        );
+        element.val(formattedValue);
+      });
+    },
+  };
 });
