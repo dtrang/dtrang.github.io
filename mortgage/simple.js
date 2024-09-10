@@ -10,13 +10,13 @@ app.controller('mortgageCtrl', function ($scope) {
       purchaseExpenses: 3000,
       loanTerm: 30,
       interestRate: 6,
-      savingsValue: 420000,
-      monthlyExpense: 7000,
+      savingsValue: 820000,
+      monthlyExpense: 10350,
       monthlyIncome: 24000,
     },
     {
-      purchaseValue: 1600000,
-      lvrValue: 100,
+      purchaseValue: 1800000,
+      lvrValue: 80,
       purchaseExpenses: 3000,
       loanTerm: 30,
       interestRate: 6,
@@ -27,21 +27,29 @@ app.controller('mortgageCtrl', function ($scope) {
   ];
 
   $scope.setScenario = function (idx) {
-    var scenario = $scope.scenarios[idx];
-    $scope.purchaseValue = scenario.purchaseValue;
-    $scope.lvrValue = scenario.lvrValue;
-    $scope.purchaseExpenses = scenario.purchaseExpenses;
+    const scenario = $scope.scenarios[idx];
+    [
+      'purchaseValue',
+      'lvrValue',
+      'purchaseExpenses',
+      'loanTerm',
+      'interestRate',
+      'savingsValue',
+      'monthlyExpense',
+      'monthlyIncome',
+    ].forEach((key) => {
+      $scope[key] = scenario[key];
+    });
+
     $scope.stampDuty = calculateStampDuty(scenario.purchaseValue);
-    $scope.downPaymentAmount =
-      scenario.purchaseValue * (1 - scenario.lvrValue / 100);
-
-    $scope.loanBalance = scenario.purchaseValue * (scenario.lvrValue / 100);
-    $scope.loanTerm = scenario.loanTerm;
-    $scope.interestRate = scenario.interestRate;
-
-    $scope.savingsValue = scenario.savingsValue;
-    $scope.monthlyExpense = scenario.monthlyExpense;
-    $scope.monthlyIncome = scenario.monthlyIncome;
+    $scope.downPaymentAmount = calcDownPaymentAmount(
+      scenario.purchaseValue,
+      scenario.lvrValue
+    );
+    $scope.loanBalance = calcLoanBalance(
+      scenario.purchaseValue,
+      scenario.lvrValue
+    );
     $scope.offsetBalance = calcInitialOffsetBalance(
       $scope.savingsValue,
       $scope.stampDuty,
@@ -53,7 +61,8 @@ app.controller('mortgageCtrl', function ($scope) {
   };
 
   $scope.$watch('purchaseValue', function (newValue, oldValue) {
-    $scope.loanBalance = newValue * ($scope.lvrValue / 100);
+    $scope.loanBalance = calcLoanBalance(newValue, $scope.lvrValue);
+    $scope.downPaymentAmount = calcDownPaymentAmount(newValue, $scope.lvrValue);
     var stampDuty = calculateStampDuty(newValue);
     $scope.stampDuty = stampDuty;
     $scope.offsetBalance = calcInitialOffsetBalance(
@@ -65,8 +74,11 @@ app.controller('mortgageCtrl', function ($scope) {
   });
 
   $scope.$watch('lvrValue', function (newValue, oldValue) {
-    $scope.loanBalance = $scope.purchaseValue * (newValue / 100);
-    $scope.downPaymentAmount = $scope.purchaseValue * (1 - newValue / 100);
+    $scope.loanBalance = calcLoanBalance($scope.purchaseValue, newValue);
+    $scope.downPaymentAmount = calcDownPaymentAmount(
+      $scope.purchaseValue,
+      newValue
+    );
     $scope.offsetBalance = calcInitialOffsetBalance(
       $scope.savingsValue,
       $scope.stampDuty,
@@ -84,17 +96,12 @@ app.controller('mortgageCtrl', function ($scope) {
     );
   });
 
-  $scope.$watch('loanBalance', function (newValue, oldValue) {
-    $scope.monthyRepayment = $scope.calcMonthlyRepayment();
-  });
-
-  $scope.$watch('loanTerm', function (newValue, oldValue) {
-    $scope.monthyRepayment = $scope.calcMonthlyRepayment();
-  });
-
-  $scope.$watch('interestRate', function (newValue, oldValue) {
-    $scope.monthyRepayment = $scope.calcMonthlyRepayment();
-  });
+  $scope.$watchGroup(
+    ['loanBalance', 'loanTerm', 'interestRate'],
+    function (newValues, oldValues) {
+      $scope.monthyRepayment = $scope.calcMonthlyRepayment();
+    }
+  );
 
   $scope.$watch('savingsValue', function (newValue, oldValue) {
     $scope.offsetBalance = calcInitialOffsetBalance(
@@ -107,6 +114,14 @@ app.controller('mortgageCtrl', function ($scope) {
 
   const calcInitialOffsetBalance = (savingsAmount, ...expenses) => {
     return savingsAmount - expenses.reduce((a, b) => a + b, 0);
+  };
+
+  const calcDownPaymentAmount = (purchaseValue, lvrValue) => {
+    return purchaseValue * (1 - lvrValue / 100);
+  };
+
+  const calcLoanBalance = (purchaseValue, lvrValue) => {
+    return purchaseValue * (lvrValue / 100);
   };
 
   $scope.calcMonthlyRepayment = function () {

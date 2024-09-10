@@ -76,9 +76,9 @@
       </p>
 
       <p>
-        <a ng-click="setScenario($index)" href="javascript:void(0);" style="margin-right: 20px;"
-          ng-repeat="s in scenarios">
-          Scenario {{ $index + 1 }}
+        <a ng-click="setScenario($index)" href="javascript:void(0);"
+          style="padding-right: 10px; margin-right: 10px; border-right: 1px solid #ddd;" ng-repeat="s in scenarios">
+          Scenario {{ s.purchaseValue | number: 0 }}
         </a>
       </p>
 
