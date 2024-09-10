@@ -57,6 +57,11 @@
     .text-bold {
       font-weight: 600;
     }
+
+    .highlight {
+      background-color: rgb(255, 236, 207);
+      transition: background-color 1s ease-out;
+    }
   </style>
 </head>
 
@@ -76,7 +81,7 @@
       </p>
 
       <p>
-        <a ng-click="setScenario($index)" href="javascript:void(0);"
+        <a ng-click="setScenario($index); calculate();" href="javascript:void(0);"
           style="padding-right: 10px; margin-right: 10px; border-right: 1px solid #ddd;" ng-repeat="s in scenarios">
           Scenario {{ s.purchaseValue | number: 0 }}
         </a>
@@ -90,7 +95,7 @@
 
             <div class="input-group">
               <span class="input-group-addon fixed"><span class="text-danger">Purchase price</span></span>
-              <input type="number" class="form-control" placeholder="500000" ng-model="purchaseValue">
+              <input type="number" class="form-control" placeholder="500000" ng-model="purchaseValue" step="50000">
               <span class="input-group-addon">.00</span>
             </div>
 
@@ -107,12 +112,12 @@
 
             <div class="input-group">
               <span class="input-group-addon fixed"><span class="text-danger">Stamp duty</span></span>
-              <span class="input-group-addon fixed"> {{ stampDuty | number: 2 }}</span>
+              <span class="input-group-addon fixed" id="stampDuty"> {{ stampDuty | number: 2 }}</span>
             </div>
 
             <div class="input-group">
               <span class="input-group-addon fixed"><span class="text-danger">Down payment</span></span>
-              <span class="input-group-addon fixed"> {{ downPaymentAmount | number: 2 }}</span>
+              <span class="input-group-addon fixed" id="downPaymentAmount"> {{ downPaymentAmount | number: 2 }}</span>
             </div>
             <hr />
 
@@ -129,7 +134,7 @@
 
             <div class="input-group">
               <span class="input-group-addon fixed"><span class="text-danger">Loan amount</span></span>
-              <input type="number" class="form-control" placeholder="500000" ng-model="loanBalance">
+              <input type="number" class="form-control" placeholder="500000" ng-model="loanBalance" id="loanBalance">
               <span class="input-group-addon">.00</span>
             </div>
 
@@ -141,7 +146,7 @@
 
             <div class="input-group">
               <span class="input-group-addon fixed">Annual interest rate</span>
-              <input type="number" step="any" class="form-control" placeholder="5" ng-model="interestRate">
+              <input type="number" step="0.1" class="form-control" placeholder="5" ng-model="interestRate">
               <span class="input-group-addon">%</span>
             </div>
 
@@ -162,7 +167,7 @@
             <div class="input-group">
               <span class="input-group-addon fixed"><span class="text-success">Offset acct
                   balance</span></span>
-              <span class="input-group-addon fixed">{{ offsetBalance | number: 2 }}</span>
+              <span class="input-group-addon fixed" id="offsetBalance">{{ offsetBalance | number: 2 }}</span>
             </div>
 
             <div class="input-group">
@@ -185,7 +190,7 @@
             </div>
             <div class="input-group" ng-show="loanOption === 1">
               <span class="input-group-addon fixed"><span class="text-danger">Monthly repayment</span></span>
-              <span class="input-group-addon fixed">{{ monthyRepayment | number: 2 }}</span>
+              <span class="input-group-addon fixed" id="monthyRepayment">{{ monthyRepayment | number: 2 }}</span>
             </div>
           </div>
 
