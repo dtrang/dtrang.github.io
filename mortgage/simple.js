@@ -294,10 +294,9 @@ app.controller('mortgageCtrl', [
     const calculateStampDuty = (value) => {
       const brackets = STAMP_DUTY[$scope.state];
       for (var i = 0; i < brackets.length; i++) {
-        if (value > brackets[i].min && value <= brackets[i].max) {
-          return (
-            brackets[i].base + (value - brackets[i].min) * brackets[i].rate
-          );
+        const b = brackets[i];
+        if (value > b.min && value <= b.max) {
+          return b.base + (value - b.min) * b.rate;
         }
       }
     };
