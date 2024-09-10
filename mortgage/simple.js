@@ -21,9 +21,11 @@ app.controller('mortgageCtrl', [
       Object.assign({ purchaseValue: 1600000 }, commonValues),
       Object.assign({ purchaseValue: 1700000 }, commonValues),
       Object.assign({ purchaseValue: 1800000 }, commonValues),
+      Object.assign({ purchaseValue: 1900000 }, commonValues),
     ];
 
     $scope.setScenario = function (idx) {
+      $scope.selectedIndex = idx;
       const scenario = $scope.scenarios[idx];
       [
         'purchaseValue',
@@ -96,6 +98,15 @@ app.controller('mortgageCtrl', [
     );
 
     /********************** Math util functions **********************/
+
+    $scope.formatNumber = (value) => {
+      if (value >= 1e6) {
+        return (value / 1e6).toFixed(2) + 'M';
+      } else if (value >= 1e3) {
+        return (value / 1e3).toFixed(2) + 'K';
+      }
+      return value.toString();
+    };
 
     $scope.calcInitialOffsetBalance = () => {
       return calcInitialOffsetBalance(
@@ -284,6 +295,7 @@ app.controller('mortgageCtrl', [
     };
 
     $scope.setScenario(0);
+
     $scope.calculate();
 
     // Helper function to highlight the changes
