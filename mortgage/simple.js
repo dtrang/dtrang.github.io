@@ -1,4 +1,15 @@
-var app = angular.module('mortgageApp', []);
+const STAMP_DUTY = {
+  NSW: [
+    { min: 0, max: 17000, base: 0, rate: 1.25 / 100 },
+    { min: 17000, max: 36000, base: 212, rate: 1.5 / 100 },
+    { min: 36000, max: 97000, base: 497, rate: 1.75 / 100 },
+    { min: 97000, max: 364000, base: 1564, rate: 3.5 / 100 },
+    { min: 364000, max: 1212000, base: 10909, rate: 4.5 / 100 },
+    { min: 1212000, max: Infinity, base: 49069, rate: 5.5 / 100 },
+  ],
+};
+
+const app = angular.module('mortgageApp', []);
 
 app.controller('mortgageCtrl', [
   '$scope',
@@ -14,6 +25,7 @@ app.controller('mortgageCtrl', [
       savingsValue: 820000,
       monthlyExpense: 10350,
       monthlyIncome: 24000,
+      state: 'NSW',
     };
 
     $scope.scenarios = [
@@ -36,6 +48,7 @@ app.controller('mortgageCtrl', [
         'savingsValue',
         'monthlyExpense',
         'monthlyIncome',
+        'state',
       ].forEach((key) => {
         $scope[key] = scenario[key];
       });
@@ -278,19 +291,14 @@ app.controller('mortgageCtrl', [
       return moment(date).format('DD MMM YYYY');
     };
 
-    const calculateStampDuty = (propertyValue) => {
-      if (propertyValue <= 16000) {
-        return Math.max(10, propertyValue * 0.0125);
-      } else if (propertyValue <= 35000) {
-        return 200 + (propertyValue - 16000) * 0.015;
-      } else if (propertyValue <= 93000) {
-        return 485 + (propertyValue - 35000) * 0.0175;
-      } else if (propertyValue <= 351000) {
-        return 1500 + (propertyValue - 93000) * 0.035;
-      } else if (propertyValue <= 1168000) {
-        return 10530 + (propertyValue - 351000) * 0.045;
-      } else {
-        return 47295 + (propertyValue - 1168000) * 0.055;
+    const calculateStampDuty = (value) => {
+      const brackets = STAMP_DUTY[$scope.state];
+      for (var i = 0; i < brackets.length; i++) {
+        if (value > brackets[i].min && value <= brackets[i].max) {
+          return (
+            brackets[i].base + (value - brackets[i].min) * brackets[i].rate
+          );
+        }
       }
     };
 
